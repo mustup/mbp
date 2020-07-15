@@ -23,7 +23,7 @@ def entry_point(
         level=logging_level,
     )
 
-    mustup.mbp.main.generate(
+    mustup.mbp.main.output(
         picture_description=args.picture_description,
         picture_path=args.picture_path,
         picture_type=args.picture_type,

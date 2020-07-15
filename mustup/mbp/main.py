@@ -10,16 +10,48 @@ logger = logging.getLogger(
 )
 
 
-def generate(
+def output(
             picture_description,
             picture_path,
             picture_type,
             output,
         ):
-    output.write(
-        'METADATA_BLOCK_PICTURE=',
+    vorbis_comment_pair = generate_vorbis_comment_pair(
+        picture_description=picture_description,
+        picture_path=picture_path,
+        picture_type=picture_type,
     )
 
+    output.write(
+        vorbis_comment_pair,
+    )
+
+    output.write(
+        '\n',
+    )
+
+
+def generate_vorbis_comment_pair(
+            picture_description,
+            picture_path,
+            picture_type,
+        ):
+    mbp_data_base64_ascii = generate_mbp_data(
+        picture_description=picture_description,
+        picture_path=picture_path,
+        picture_type=picture_type,
+    )
+
+    vorbis_comment_pair = f'METADATA_BLOCK_PICTURE={ mbp_data_base64_ascii }'
+
+    return vorbis_comment_pair
+
+
+def generate_mbp_data(
+            picture_description,
+            picture_path,
+            picture_type,
+        ):
     metadata_block_picture_data = [
     ]
 
@@ -188,20 +220,14 @@ def generate(
         picture_data,
     )
 
-    metadata_block_picture_data_base64 = base64.b64encode(
+    mbp_data_base64 = base64.b64encode(
         s=bytes(
             metadata_block_picture_data,
         ),
     )
 
-    metadata_block_picture_data_base64_ascii = metadata_block_picture_data_base64.decode(
+    mbp_data_base64_ascii = mbp_data_base64.decode(
         'ascii',
     )
 
-    output.write(
-        metadata_block_picture_data_base64_ascii,
-    )
-
-    output.write(
-        '\n',
-    )
+    return mbp_data_base64_ascii
